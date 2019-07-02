@@ -1,12 +1,24 @@
 is_window <- function(){
-  Sys.info()$sysname == "Windows"
+  as.logical(Sys.info()["sysname"] == "Windows")
 }
+
 is_mac <- function(){
-  Sys.info()$sysname == "Darwin"
+  as.logical(Sys.info()["sysname"] == "Darwin")
 }
+
 is_linux <- function(){
-  Sys.info()$sysname == "Linux"
+  as.logical(Sys.info()["sysname"] == "Linux")
 }
+
+os_what <- function(){
+  switch(
+    Sys.info()["sysname"],
+    Windows = "windows",
+    Darwin = "darwin",
+    Linux = "linux"
+  )
+}
+
 
 #' @rdname jabba-tools
 #' @export
@@ -16,7 +28,7 @@ jabba_binary <- function(jabba = "auto") {
   if (identical(jabba, "auto")) {
     jabba <- find_jabba()
     if (is.null(jabba))
-      stop("Unable to find jabba binary. Please install_jabba first.", call. = FALSE)
+      stop("Unable to find jabba binary. Please download_jabba() first.", call. = FALSE)
     jabba <- jabba[[1]]
   }
   
@@ -35,15 +47,33 @@ jabba_version <- function(jabba = "auto") {
 
 find_jabba <- function(){
   jabba <- Sys.which("jabba")
+  if (!nzchar(jabba)) {
+    jabba_locations  <- c(
+      path.expand("~/jabba/")
+    )
+    if (is_windows()) {
+      jabba_scripts <- c(
+        path.expand("~/jabba/")
+      )
+    }
+    jabba_locations <- jabba_locations[file.exists(jabba_locations)]
+    if (length(jabba_locations) > 0)
+      jabba_locations
+    else
+      NULL
+  } else {
+    jabba
+  }
 }
 
 get_jabba <- function(){
-  
+  tar_urls <- jabba_release()
+  os <- os_what()
+  tar_url <- grep(os, tar_urls, value = T)
+  if (is_window()) {
+    download.file(tar_url, destfile = , mode = "wb")
+  }
 }
-
-
-
-jabba_()
 
 jabba_version_list <- function() {
   httr::GET("https://api.github.com/repos/shyiko/jabba/releases") %>% 
@@ -63,4 +93,8 @@ jabba_release <- function(version = "latest"){
     httr::content() %>% 
     with(assets) %>% 
     sapply(function(x) x$browser_download_url)
+}
+
+jabba_loc <- function(){
+  
 }
