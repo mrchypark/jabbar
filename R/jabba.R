@@ -11,7 +11,7 @@ jabba_binary <- function(jabba = "auto") {
   if (identical(jabba, "auto")) {
     jabba <- find_jabba()
     if (is.null(jabba))
-      stop("Unable to find jabba binary. Please download_jabba() first.", call. = FALSE)
+      stop("Unable to find jabba binary. Please get_jabba() first.", call. = FALSE)
     jabba <- jabba[[1]]
   }
   
@@ -52,6 +52,7 @@ find_jabba <- function(){
 
 get_jabba <- function(path = jabba_loc()){
   tar_urls <- jabba_release()
+  tar_urls <- grep(tar_urls, "amd64", value = T)
   os <- os_what()
   tar_url <- grep(os, tar_urls, value = T)
   path <- fs::path(path, "bin")
