@@ -52,7 +52,7 @@ find_jabba <- function(){
 
 get_jabba <- function(path = jabba_loc()){
   tar_urls <- jabba_release()
-  tar_urls <- grep(tar_urls, "amd64", value = T)
+  tar_urls <- grep("amd64", tar_urls, value = T)
   os <- os_what()
   tar_url <- grep(os, tar_urls, value = T)
   path <- fs::path(path, "bin")
